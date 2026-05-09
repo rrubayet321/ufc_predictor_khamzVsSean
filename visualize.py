@@ -71,6 +71,42 @@ def _get_fighter_fights(fights_df, name):
     return ff
 
 
+def _compute_current_elo_from_fights(fights_df: pd.DataFrame, fighter: str) -> float:
+    """Compute current ELO for a fighter using fight outcomes."""
+    if fights_df.empty:
+        return float(config.ELO_INITIAL)
+
+    df = fights_df.copy()
+    df["_dt"] = pd.to_datetime(df["event_date"], errors="coerce")
+    df = df.dropna(subset=["_dt"]).sort_values("_dt")
+
+    elos = defaultdict(lambda: float(config.ELO_INITIAL))
+
+    for _, row in df.iterrows():
+        fa = row.get("fighter_a")
+        fb = row.get("fighter_b")
+        winner = row.get("winner")
+
+        if not fa or not fb or not winner or pd.isna(winner):
+            continue
+
+        if winner == fa:
+            result_a = 1.0
+        elif winner == fb:
+            result_a = 0.0
+        else:
+            continue
+
+        elo_a = elos[fa]
+        elo_b = elos[fb]
+        expected_a = 1.0 / (1 + 10 ** ((elo_b - elo_a) / config.ELO_SCALE))
+        delta = config.ELO_K * (result_a - expected_a)
+        elos[fa] = elo_a + delta
+        elos[fb] = elo_b - delta
+
+    return elos[fighter]
+
+
 # ═══ PLOT 1: DONUT CHART ═════════════════════════════════════════════
 
 def plot_donut(result: dict) -> str:
@@ -566,8 +602,8 @@ def plot_summary_card(result, model_bundle, fights_df) -> str:
              ha="center", va="top", fontsize=8, color=LGRAY)
 
     # ── ELO BOX ────────────────────────────────────────────────────────
-    elo_a = 1558.8
-    elo_b = 1513.7
+    elo_a = _compute_current_elo_from_fights(fights_df, config.FIGHTER_A)
+    elo_b = _compute_current_elo_from_fights(fights_df, config.FIGHTER_B)
     box2_left, box2_right = 0.54, 0.92
     rect2 = plt.Rectangle((box2_left, box_bottom), box2_right - box2_left,
                            box_top - box_bottom, fill=True, facecolor="#F8F8F8",
