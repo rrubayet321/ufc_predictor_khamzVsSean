@@ -18,7 +18,7 @@ from sklearn.base import clone
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.feature_selection import SelectKBest, mutual_info_classif
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, LogisticRegressionCV
 from sklearn.model_selection import (
     RepeatedStratifiedKFold,
     StratifiedKFold,
@@ -41,7 +41,7 @@ log = logging.getLogger(__name__)
 
 def _optuna_tune(name: str, X: np.ndarray, y: np.ndarray, inner_cv):
     """Use Optuna to find best hyperparameters for a model."""
-    if config.OPTUNA_TRIALS <= 0:
+    if config.OPTUNA_TRIALS <= 0 or name == "svm":
         return None
     try:
         import optuna
@@ -86,15 +86,6 @@ def _optuna_tune(name: str, X: np.ndarray, y: np.ndarray, inner_cv):
                     random_state=42,
                 )
             elif name == "svm":
-                model = SVC(
-                    C=trial.suggest_float("C", 0.1, 10, log=True),
-                    gamma=trial.suggest_float("gamma", 1e-3, 0.5, log=True),
-                    kernel=trial.suggest_categorical("kernel", ["rbf", "poly"]),
-                    probability=True,
-                    class_weight="balanced",
-                    random_state=42,
-                )
-            else:
                 return 0.5
 
             scores = cross_val_score(model, X, y, cv=inner_cv, scoring="accuracy", n_jobs=-1)
@@ -138,8 +129,8 @@ def _build_default_estimators():
 
 def _build_meta_params():
     """Return meta-learner for stacking."""
-    return LogisticRegression(
-        C=0.1, solver="liblinear", penalty="l2",
+    return LogisticRegressionCV(
+        cv=5, penalty="l2",
         class_weight="balanced", random_state=42, max_iter=2000,
     )
 

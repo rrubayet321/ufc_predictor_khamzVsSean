@@ -12,6 +12,8 @@ Produces:
 
 import logging
 import warnings
+from pathlib import Path
+from collections import defaultdict
 
 import joblib
 import matplotlib

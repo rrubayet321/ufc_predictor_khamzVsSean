@@ -22,8 +22,8 @@ ELO_K = 32
 ELO_SCALE = 400  # Logistic scale factor
 
 # ── Feature settings ───────────────────────────────────────────────
-ROLLING_WINDOWS = [3, 5, 8]  # Last-N fight windows for rolling features
-OPPONENT_QUALITY_WINDOW = 3   # Last N opponents to gauge quality
+ROLLING_WINDOWS = [2, 4, 8]  # Last-N fight windows for rolling features
+OPPONENT_QUALITY_WINDOW = 5   # Last N opponents to gauge quality
 
 # ── Monte Carlo / Prediction settings ──────────────────────────────
 MONTE_CARLO_ITERS = 2000
@@ -33,10 +33,10 @@ BOOTSTRAP_SIZE = 0.7
 CV_FOLDS = 5
 CV_INNER_FOLDS = 3
 CV_REPEATS = 1  # Use RepeatedStratifiedKFold
-OPTUNA_TRIALS = 0  # 0 = skip Optuna, use defaults
+OPTUNA_TRIALS = 20  # Run 20 Optuna trials for tuning
 
 # ── Feature selection ──────────────────────────────────────────────
-FEATURE_SELECTION_K = 30  # Top K features by mutual information (0 = no selection)
+FEATURE_SELECTION_K = 0  # 0 = no selection, let models handle it
 
 # ── Class labels ───────────────────────────────────────────────────
 FIGHTER_A_LABEL = 1  # Strickland wins

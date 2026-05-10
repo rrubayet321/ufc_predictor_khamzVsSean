@@ -1,73 +1,80 @@
-# UFC Fight Predictor — Strickland vs Chimaev
+# UFC Fight Predictor: Strickland vs. Chimaev
 
-End-to-end UFC fight prediction system that scrapes UFCStats, engineers advanced features, trains a stacking ensemble, runs Monte Carlo simulations for uncertainty, and generates publication-ready visuals.
+![Prediction Summary](data/processed/07_summary_card.png)
 
-## Highlights
-- **Full pipeline**: scrape → engineer features → train → predict → visualize
-- **Feature-rich modeling**: ELO, rolling performance, physical differentials, opponent quality, win streaks
-- **Stacking ensemble**: XGBoost + LightGBM + RandomForest + SVM → Logistic Regression
-- **Uncertainty modeling**: Monte Carlo bootstrap on the meta-learner
-- **Professional visuals**: donut, radar, ELO history, feature importance, performance dashboard, summary card
+An end-to-end machine learning pipeline designed to predict the outcome of UFC fights. The current predictive model focuses on the highly anticipated matchup between **Sean Strickland** and **Khamzat Chimaev**. This project features automated data scraping from UFCStats, advanced feature engineering, a hyperparameter-optimized stacking ensemble, Monte Carlo uncertainty simulations, and publication-ready analytical visualizations.
 
-## Project structure
-- `scraper.py` — collects events, fights, fighter profiles, and detailed round stats
-- `features.py` — builds a fight-level feature matrix (`data/processed/features.csv`)
-- `train.py` — trains the stacking ensemble and saves the model bundle
-- `predict.py` — produces prediction + MC distribution + SHAP explanation
-- `visualize.py` — generates all figures for reporting
-- `run.py` — orchestration entry point
+---
 
-## Quick start
-1. Install dependencies
-2. Run the full pipeline
+## 📊 Core Visualizations & Analysis
 
-The pipeline automatically scrapes data, builds features, trains the model, and generates predictions and visuals.
+### The Matchup: Fighter Profiles
+We quantify fighter styles across key metrics like striking accuracy, takedown defense, and finish rates.
+![Fighter Radar](data/processed/02_radar.png)
 
-## Usage
-Run the full pipeline:
-- `python run.py`
+### ELO Rating History
+Like chess, fighters are assigned an ELO rating that fluctuates based on who they beat and who they lose to. 
+![ELO History](data/processed/03_elo_history.png)
 
-Run stages independently:
-- `python run.py --scrape`
-- `python run.py --features`
-- `python run.py --train`
-- `python run.py --predict`
+### Feature Importance
+What data points actually drive the algorithm's predictions? Our model values overall ELO differential, strike defense, and ring-rust above all else.
+![Feature Importance](data/processed/04_feature_importance.png)
 
-## Prediction output
-`predict.py` prints a summary including:
-- Estimated win probabilities for both fighters
-- 95% confidence intervals from Monte Carlo simulation
-- Model accuracy (CV mean ± std)
-- Saved plots for SHAP and probability distribution
+### Model Diagnostics & Performance
+Evaluating the stacking ensemble across 5-Fold Stratified Cross-Validation:
+![Model Performance](data/processed/06_model_performance.png)
 
-Prediction artifacts are written to `data/processed/`:
-- `mc_distribution.png`
-- `shap_waterfall.png` (if SHAP is installed)
+### SHAP Explainability
+A transparent breakdown showing exactly how the model arrived at its specific win probability for Strickland vs. Chimaev.
+![SHAP Explanation](data/processed/shap_waterfall.png)
 
-## Visualizations
-`visualize.py` produces a full set of report-ready graphics:
-1. `01_donut.png` — win probability donut chart
-2. `02_radar.png` — fighter profile radar comparison
-3. `03_elo_history.png` — ELO rating history
-4. `04_feature_importance.png` — top model drivers
-5. `05_head_to_head.png` — career comparison bars
-6. `06_model_performance.png` — ROC + confusion matrix
-7. `07_summary_card.png` — LinkedIn-style summary panel
+---
 
-All figures are saved under `data/processed/`.
+## 🚀 Key Highlights
 
-## Outputs
-- `data/processed/features.csv` — model-ready feature matrix
-- `data/processed/model.joblib` — trained ensemble bundle
-- `data/processed/scaler.joblib` — feature scaler
-- `data/processed/selector.joblib` — optional feature selector
-- `data/processed/metadata.joblib` — feature metadata
-- Visualizations: `01_donut.png` … `07_summary_card.png`
+*   **Fully Automated Pipeline**: Seamless execution from data collection (`scraper.py`) to advanced visualization (`visualize.py`).
+*   **Robust Feature Engineering**: Computes ELO ratings, 2/4/8-fight rolling averages, dynamic physical differentials, and opponent quality markers over 8,600+ historical fights.
+*   **Stacking Ensemble Architecture**: Base models (XGBoost, LightGBM, Random Forest, SVM) are dynamically tuned via Optuna and stacked using `LogisticRegressionCV`.
+*   **Uncertainty Modeling**: Runs 2,000-iteration Monte Carlo bootstrapping on the meta-learner to calculate robust 95% confidence intervals.
+*   **Explainable AI (XAI)**: Utilizes SHAP permutation explainers to visually unpack exactly why the model makes its decisions.
 
-## Notes
-- Scraping all fight details can take time; UFCStats may throttle requests.
-- If raw data already exists in `data/raw/`, you can start from `--features`.
+---
 
-## Troubleshooting
-- If `features.csv` is empty, ensure `data/raw/fights.csv` exists and has decisive results.
-- If prediction fails, re-run `python run.py --train` to regenerate the model bundle.
+## 🛠️ Project Structure
+
+*   `scraper.py`: Extracts raw historical fight events, profiles, and round-by-round statistics.
+*   `features.py`: Transforms raw logs into a 37-column complex mathematical feature matrix (`data/processed/features.csv`).
+*   `train.py`: Handles hyperparameter tuning (Optuna), training the base estimators, and fitting the stacking meta-learner.
+*   `predict.py`: Runs Monte Carlo simulations on the target matchup to generate probability distributions and SHAP values.
+*   `visualize.py`: Automatically generates all report-ready graphical assets.
+*   `run.py`: The main orchestration entry point.
+
+---
+
+## 💻 Quick Start
+
+Run the entire pipeline (scraping, feature engineering, training, and predicting) with a single command:
+
+```bash
+python run.py
+```
+
+Alternatively, run specific stages independently:
+```bash
+python run.py --scrape
+python run.py --features
+python run.py --train
+python run.py --predict
+```
+
+---
+
+## 📈 Prediction Outputs
+
+The final prediction output is automatically printed to the terminal and visualized. The output includes:
+* Estimated win probabilities for both fighters.
+* 95% Confidence Intervals from the Monte Carlo simulation.
+* Historical Cross-Validation (CV) Accuracy.
+* Stored visualization assets in `data/processed/`.
+
+> **Disclaimer:** This project is for educational and informational purposes only. Past performance in combat sports does not guarantee future results.
