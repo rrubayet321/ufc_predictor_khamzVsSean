@@ -6,7 +6,7 @@ An end-to-end machine learning pipeline designed to predict the outcome of UFC f
 
 ---
 
-## 📊 Core Visualizations & Analysis
+## Core Visualizations & Analysis
 
 ### The Matchup: Fighter Profiles
 We quantify fighter styles across key metrics like striking accuracy, takedown defense, and finish rates.
@@ -30,7 +30,7 @@ A transparent breakdown showing exactly how the model arrived at its specific wi
 
 ---
 
-## 🚀 Key Highlights
+## Key Highlights
 
 *   **Fully Automated Pipeline**: Seamless execution from data collection (`scraper.py`) to advanced visualization (`visualize.py`).
 *   **Robust Feature Engineering**: Computes ELO ratings, 2/4/8-fight rolling averages, dynamic physical differentials, and opponent quality markers over 8,600+ historical fights.
@@ -40,7 +40,7 @@ A transparent breakdown showing exactly how the model arrived at its specific wi
 
 ---
 
-## 🛠️ Project Structure
+## Project Structure
 
 *   `scraper.py`: Extracts raw historical fight events, profiles, and round-by-round statistics.
 *   `features.py`: Transforms raw logs into a 37-column complex mathematical feature matrix (`data/processed/features.csv`).
@@ -51,7 +51,7 @@ A transparent breakdown showing exactly how the model arrived at its specific wi
 
 ---
 
-## 💻 Quick Start
+## Quick Start
 
 Run the entire pipeline (scraping, feature engineering, training, and predicting) with a single command:
 
@@ -69,7 +69,7 @@ python run.py --predict
 
 ---
 
-## 📈 Prediction Outputs
+## Prediction Outputs
 
 The final prediction output is automatically printed to the terminal and visualized. The output includes:
 * Estimated win probabilities for both fighters.
